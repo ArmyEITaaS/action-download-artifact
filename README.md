@@ -14,16 +14,18 @@ Let's suppose you have a workflow with a job in it that at the end uploads an ar
 - name: Download artifact
   uses: dawidd6/action-download-artifact@v2
   with:
-    # Optional, GitHub token
+    # Optional, GitHub token, a Personal Access Token with `public_repo` scope if needed
+    # Required, if artifact is from a different repo
+    # Required, if repo is private a Personal Access Token with `repo` scope is needed
     github_token: ${{secrets.GITHUB_TOKEN}}
-    # Required, workflow file name or ID
+    # Optional, workflow file name or ID
+    # If not specified, will be inferred from run_id (if run_id is specified), or will be the current workflow
     workflow: workflow_name.yml
     # Optional, the status or conclusion of a completed workflow to search for
-    # Can be one of a workflow conclusion::
-    # "failure", "success", "neutral", "cancelled", "skipped", "timed_out", "action_required"
+    # Can be one of a workflow conclusion:
+    #   "failure", "success", "neutral", "cancelled", "skipped", "timed_out", "action_required"
     # Or a workflow status:
-    # "completed", "in_progress", "queued"
-    # Default: "completed,success"
+    #   "completed", "in_progress", "queued"
     workflow_conclusion: success
     # Optional, will get head commit SHA
     pr: ${{github.event.pull_request.number}}
@@ -42,8 +44,18 @@ Let's suppose you have a workflow with a job in it that at the end uploads an ar
     # and extract them in respective subdirectories
     # https://github.com/actions/download-artifact#download-all-artifacts
     name: artifact_name
-    # Optional, directory where to extract artifact
+    # Optional, directory where to extract artifact(s), defaults to current directory
     path: extract_here
     # Optional, defaults to current repo
     repo: ${{github.repository}}
+    # Optional, check the workflow run whether it has an artifact
+    # then will get the last available artifact from previous workflow
+    # default false, just try to download from the last one
+    check_artifacts:  false
+    # Optional, search for the last workflow run whose stored an artifact named as in `name` input
+    # default false
+    search_artifacts: false
+    # Optional, choose to skip unpacking the downloaded artifact(s)
+    # default false
+    skip_unpack: false
 ```
